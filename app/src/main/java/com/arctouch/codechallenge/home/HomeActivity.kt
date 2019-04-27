@@ -12,7 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.home_activity.*
 
-class HomeActivity : BaseActivity(), HomeAdapter.OnItemClickListener {
+class HomeActivity : BaseActivity(), HomeAdapter.OnItemClickListener{
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,13 +31,7 @@ class HomeActivity : BaseActivity(), HomeAdapter.OnItemClickListener {
             }
     }
 
-    override fun onItemClicked(id: Int) {
-
-        api.movie(id, TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    Toast.makeText(this, "${it.id}".plus(" - ").plus("${it.title}"), Toast.LENGTH_LONG).show()
-                }
+    override fun onItemClicked(movieId: Int) {
+        MovieDetailsFragment.newInstance(movieId).show(supportFragmentManager, MovieDetailsFragment::class.java.name)
     }
 }

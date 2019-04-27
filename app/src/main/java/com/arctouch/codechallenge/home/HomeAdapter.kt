@@ -1,6 +1,6 @@
 package com.arctouch.codechallenge.home
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +46,6 @@ class HomeAdapter(private val movies: List<Movie>,
             onItemClickListener)
 
     interface OnItemClickListener {
-        fun onItemClicked(id: Int)
+        fun onItemClicked(movieId: Int)
     }
 }
