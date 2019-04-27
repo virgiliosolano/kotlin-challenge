@@ -1,7 +1,9 @@
 package com.arctouch.codechallenge.home
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.api.TmdbApi
 import com.arctouch.codechallenge.base.BaseActivity
@@ -10,8 +12,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.home_activity.*
 
-class HomeActivity : BaseActivity() {
+class HomeActivity : BaseActivity(), HomeAdapter.OnItemClickListener{
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
@@ -23,8 +26,12 @@ class HomeActivity : BaseActivity() {
                 val moviesWithGenres = it.results.map { movie ->
                     movie.copy(genres = Cache.genres.filter { movie.genreIds?.contains(it.id) == true })
                 }
-                recyclerView.adapter = HomeAdapter(moviesWithGenres)
+                recyclerView.adapter = HomeAdapter(moviesWithGenres, this)
                 progressBar.visibility = View.GONE
             }
+    }
+
+    override fun onItemClicked(movieId: Int) {
+        MovieDetailsFragment.newInstance(movieId).show(supportFragmentManager, MovieDetailsFragment::class.java.name)
     }
 }
