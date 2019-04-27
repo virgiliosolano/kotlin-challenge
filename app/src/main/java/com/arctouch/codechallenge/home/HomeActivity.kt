@@ -1,5 +1,6 @@
 package com.arctouch.codechallenge.home
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import com.arctouch.codechallenge.R
@@ -10,8 +11,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.home_activity.*
 
-class HomeActivity : BaseActivity() {
+class HomeActivity : BaseActivity(), HomeAdapter.OnItemClickListener {
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
@@ -26,5 +28,10 @@ class HomeActivity : BaseActivity() {
                 recyclerView.adapter = HomeAdapter(moviesWithGenres)
                 progressBar.visibility = View.GONE
             }
+    }
+
+    override fun onItemClicked(id: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 }

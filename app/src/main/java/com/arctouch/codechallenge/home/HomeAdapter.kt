@@ -37,4 +37,8 @@ class HomeAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<HomeAd
     override fun getItemCount() = movies.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(movies[position])
+
+    interface OnItemClickListener {
+        fun onItemClicked(id: Int)
+    }
 }
