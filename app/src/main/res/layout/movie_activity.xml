@@ -9,6 +9,16 @@
     android:background="@android:color/transparent"
     tools:context=".movie.MovieActivity">
 
+    <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+        android:id="@+id/recyclerShimmer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:shimmer_demo_child_count="10"
+        app:shimmer_demo_grid_child_count="3"
+        app:shimmer_demo_layout="@layout/movie_item_fake_shimmer"
+        app:shimmer_demo_layout_manager_type="grid"
+        app:shimmer_demo_angle="15" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMovie"
         android:layout_width="match_parent"
@@ -19,11 +29,4 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="10"
         tools:listitem="@layout/movie_item" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        tools:visibility="gone" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

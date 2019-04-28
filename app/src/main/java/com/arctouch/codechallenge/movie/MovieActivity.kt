@@ -21,6 +21,8 @@ class MovieActivity : AppCompatActivity(), MovieAdapter.OnItemClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.movie_activity)
 
+        recyclerShimmer.showShimmerAdapter()
+
         recyclerMovie.layoutManager = GridLayoutManager(this, 3)
         recyclerMovie.setHasFixedSize(true)
 
@@ -30,8 +32,14 @@ class MovieActivity : AppCompatActivity(), MovieAdapter.OnItemClickListener {
             if (!it.isEmpty()) {
                 recyclerMovie.adapter = MovieAdapter(it, this)
             }
-            progressBar.visibility = View.GONE
+            recyclerShimmer.hideShimmerAdapter()
+            recyclerShimmer.visibility = View.GONE
         })
+    }
+
+    override fun onStop() {
+        recyclerShimmer.hideShimmerAdapter()
+        super.onStop()
     }
 
     override fun onItemClicked(movieId: Int) {
