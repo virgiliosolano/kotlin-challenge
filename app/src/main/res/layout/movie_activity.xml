@@ -7,10 +7,10 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
     android:background="@android:color/transparent"
-    tools:context=".HomeActivity">
+    tools:context=".movie.MovieActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recyclerMovie"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"

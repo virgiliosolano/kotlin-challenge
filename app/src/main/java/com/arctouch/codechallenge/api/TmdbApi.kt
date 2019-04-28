@@ -8,33 +8,22 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+/**
+ * TmdbApi
+ *
+ * Interface methods to call data from server
+ */
 interface TmdbApi {
 
-    companion object {
-        const val URL = "https://api.themoviedb.org/3/"
-        const val API_KEY = "1f54bd990f1cdfb230adb312546d765d"
-        const val DEFAULT_LANGUAGE = "en-US"
-        const val DEFAULT_REGION = "US"
-    }
-
     @GET("genre/movie/list")
-    fun genres(
-        @Query("api_key") apiKey: String,
-        @Query("language") language: String
-    ): Observable<GenreResponse>
+    fun genres(): Observable<GenreResponse>
 
     @GET("movie/upcoming")
     fun upcomingMovies(
-        @Query("api_key") apiKey: String,
-        @Query("language") language: String,
         @Query("page") page: Long,
         @Query("region") region: String
     ): Observable<UpcomingMoviesResponse>
 
     @GET("movie/{id}")
-    fun movie(
-        @Path("id") id: Int,
-        @Query("api_key") apiKey: String,
-        @Query("language") language: String
-    ): Observable<Movie>
+    fun movie(@Path("id") id: Int): Observable<Movie>
 }
