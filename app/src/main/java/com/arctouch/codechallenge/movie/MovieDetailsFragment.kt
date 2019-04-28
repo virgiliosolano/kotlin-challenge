@@ -14,6 +14,7 @@ import com.arctouch.codechallenge.api.TmdbNetwork
 import com.arctouch.codechallenge.databinding.MovieDetailsFragmentBinding
 import com.arctouch.codechallenge.repository.MovieRepository
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.android.synthetic.main.movie_details_fragment.*
 
 class MovieDetailsFragment : BottomSheetDialogFragment() {
 
@@ -33,12 +34,22 @@ class MovieDetailsFragment : BottomSheetDialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        containerDetailsShimmerLayout.startShimmer()
+
         movieDetailsViewModel = getMovieViewModel(MovieRepository(TmdbNetwork.create()),
                 arguments?.get(MOVIE_ID) as Int)
 
         movieDetailsViewModel.movieDetails.observe(this, Observer {
             moviewDetailsBinding.movie = it
+            containerMovieDetails.visibility = View.VISIBLE
+            containerDetailsShimmerLayout.stopShimmer()
+            containerDetailsShimmerLayout.visibility = View.GONE
         })
+    }
+
+    override fun onStop() {
+        containerDetailsShimmerLayout.stopShimmer()
+        super.onStop()
     }
 
     companion object {

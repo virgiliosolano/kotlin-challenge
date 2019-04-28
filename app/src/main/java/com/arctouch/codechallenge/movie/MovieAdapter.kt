@@ -18,11 +18,9 @@ class MovieAdapter(private val movies: List<Movie>,
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val movieImageUrlBuilder = MovieImageUrlBuilder()
-
-        //TODO REFACTORY TO DATABINDING
         fun bind(movie: Movie, onItemClickListener: OnItemClickListener) {
             itemView.titleTextView.text = movie.title
-            itemView.genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
+            //itemView.genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
             itemView.releaseDateTextView.text = movie.releaseDate
 
             Glide.with(itemView)
