@@ -1,6 +1,5 @@
 package com.arctouch.codechallenge.movie
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +16,6 @@ class MovieActivity : AppCompatActivity(), MovieAdapter.OnItemClickListener {
 
     private lateinit var movieViewModel: MovieViewModel
 
-    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)

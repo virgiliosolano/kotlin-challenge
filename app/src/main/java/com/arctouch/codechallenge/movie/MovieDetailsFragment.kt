@@ -1,66 +1,44 @@
 package com.arctouch.codechallenge.movie
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.arctouch.codechallenge.R
-import com.arctouch.codechallenge.api.TmdbApi
-import com.arctouch.codechallenge.util.MovieImageUrlBuilder
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.arctouch.codechallenge.api.TmdbNetwork
+import com.arctouch.codechallenge.databinding.MovieDetailsFragmentBinding
+import com.arctouch.codechallenge.repository.MovieRepository
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.movie_details_fragment.*
 
 class MovieDetailsFragment : BottomSheetDialogFragment() {
 
     private val MOVIE_ID = "movie_id"
-
-    private lateinit var tmdbApiService: TmdbApi
-    private lateinit var viewModel: MovieDetailsViewModel
-    private lateinit var apiService: TmdbApi
+    private lateinit var moviewDetailsBinding: MovieDetailsFragmentBinding
+    private lateinit var movieDetailsViewModel: MovieDetailsViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        //tmdbApiService = TmdbApi.create()
+        moviewDetailsBinding = DataBindingUtil.inflate(inflater,
+                R.layout.movie_details_fragment, container, false)
 
-        return inflater.inflate(R.layout.movie_details_fragment, container, false)
+        return moviewDetailsBinding.root
     }
 
-    @SuppressLint("CheckResult")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(MovieDetailsViewModel::class.java)
 
-        tmdbApiService.movie(arguments?.get(MOVIE_ID) as Int)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+        movieDetailsViewModel = getMovieViewModel(MovieRepository(TmdbNetwork.create()),
+                arguments?.get(MOVIE_ID) as Int)
 
-                    textMovieName.text = it.title
-                    textMovieDescription.text = it.overview
-                    textMovieDate.text = it.releaseDate
-                    textMovieGenders.text = it.genres?.joinToString { it.name }
-
-                    context?.let { context ->
-                        Glide.with(context)
-                                .load(it.backdropPath?.let { MovieImageUrlBuilder().buildBackdropUrl(it) })
-                                .apply(RequestOptions().placeholder(R.drawable.ic_image_placeholder))
-                                .into(imageMovieBackdrop)
-                    }
-
-                    context?.let { context ->
-                        Glide.with(context)
-                                .load(it.posterPath?.let { MovieImageUrlBuilder().buildPosterUrl(it) })
-                                .apply(RequestOptions().placeholder(R.drawable.ic_image_placeholder))
-                                .into(imageMoviePoster)
-                    }
-                }
+        movieDetailsViewModel.movieDetails.observe(this, Observer {
+            moviewDetailsBinding.movie = it
+        })
     }
 
     companion object {
@@ -70,5 +48,14 @@ class MovieDetailsFragment : BottomSheetDialogFragment() {
                         putInt(MOVIE_ID, movieId)
                     }
                 }
+    }
+
+    private fun getMovieViewModel(movieRepository: MovieRepository, movieId: Int): MovieDetailsViewModel {
+        return ViewModelProviders.of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return MovieDetailsViewModel(movieRepository, movieId) as T
+            }
+        })[MovieDetailsViewModel::class.java]
     }
 }

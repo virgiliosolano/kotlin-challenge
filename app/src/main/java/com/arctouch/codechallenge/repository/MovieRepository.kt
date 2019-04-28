@@ -15,4 +15,9 @@ class MovieRepository(private val tmdbApi: TmdbApi) {
         return movieNetworkData.moviesResponse
     }
 
+    fun fetchMovieDetails(compositeDisposable: CompositeDisposable, movieId: Int) : LiveData<Movie> {
+        movieNetworkData = MovieNetworkData(tmdbApi, compositeDisposable)
+        movieNetworkData.fetchMovieDetails(movieId)
+        return movieNetworkData.movieResponse
+    }
 }
