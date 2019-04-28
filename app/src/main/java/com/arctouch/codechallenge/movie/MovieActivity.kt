@@ -7,10 +7,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.api.TmdbNetwork
 import com.arctouch.codechallenge.repository.MovieRepository
-import kotlinx.android.synthetic.main.home_activity.*
+import kotlinx.android.synthetic.main.movie_activity.*
 
 class MovieActivity : AppCompatActivity(), MovieAdapter.OnItemClickListener {
 
@@ -18,13 +19,16 @@ class MovieActivity : AppCompatActivity(), MovieAdapter.OnItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.home_activity)
+        setContentView(R.layout.movie_activity)
+
+        recyclerMovie.layoutManager = GridLayoutManager(this, 3)
+        recyclerMovie.setHasFixedSize(true)
 
         movieViewModel = getMovieViewModel(MovieRepository(TmdbNetwork.create()))
 
         movieViewModel.movies.observe(this, Observer {
             if (!it.isEmpty()) {
-                recyclerView.adapter = MovieAdapter(it, this)
+                recyclerMovie.adapter = MovieAdapter(it, this)
             }
             progressBar.visibility = View.GONE
         })

@@ -19,6 +19,7 @@ class MovieAdapter(private val movies: List<Movie>,
 
         private val movieImageUrlBuilder = MovieImageUrlBuilder()
 
+        //TODO REFACTORY TO DATABINDING
         fun bind(movie: Movie, onItemClickListener: OnItemClickListener) {
             itemView.titleTextView.text = movie.title
             itemView.genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
