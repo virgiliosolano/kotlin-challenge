@@ -60,6 +60,7 @@ class MovieActivity : AppCompatActivity(), MoviePageListAdapter.OnItemClickListe
     private fun getMovieViewModel(movieRepository: MovieRepository): MovieViewModel {
         return ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
                 return MovieViewModel(movieRepository) as T
             }
         })[MovieViewModel::class.java]
