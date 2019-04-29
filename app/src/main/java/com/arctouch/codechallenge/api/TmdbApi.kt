@@ -20,7 +20,7 @@ interface TmdbApi {
 
     @GET("movie/upcoming")
     fun upcomingMovies(
-        @Query("page") page: Long,
+        @Query("page") page: Int,
         @Query("region") region: String
     ): Observable<UpcomingMoviesResponse>
 

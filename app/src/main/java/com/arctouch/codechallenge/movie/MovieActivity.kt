@@ -11,29 +11,38 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.api.TmdbNetwork
 import com.arctouch.codechallenge.repository.MovieRepository
+import com.arctouch.codechallenge.repository.NetworkState
 import kotlinx.android.synthetic.main.movie_activity.*
 
-class MovieActivity : AppCompatActivity(), MovieAdapter.OnItemClickListener {
+class MovieActivity : AppCompatActivity(), MoviePageListAdapter.OnItemClickListener {
 
     private lateinit var movieViewModel: MovieViewModel
+    private lateinit var moviePageListAdapter: MoviePageListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.movie_activity)
 
-        recyclerShimmer.showShimmerAdapter()
-
+        moviePageListAdapter = MoviePageListAdapter( this)
         recyclerMovie.layoutManager = GridLayoutManager(this, 3)
         recyclerMovie.setHasFixedSize(true)
+        recyclerMovie.adapter = moviePageListAdapter
 
         movieViewModel = getMovieViewModel(MovieRepository(TmdbNetwork.create()))
+        movieViewModel.moviePagedList.observe(this, Observer {
+            moviePageListAdapter.submitList(it)
+        })
 
-        movieViewModel.movies.observe(this, Observer {
-            if (!it.isEmpty()) {
-                recyclerMovie.adapter = MovieAdapter(it, this)
+        movieViewModel.networkState.observe(this, Observer {
+            if (movieViewModel.listIsEmpty() && it == NetworkState.LOADING) {
+                recyclerShimmer.showShimmerAdapter()
             }
-            recyclerShimmer.hideShimmerAdapter()
-            recyclerShimmer.visibility = View.GONE
+
+            if (!movieViewModel.listIsEmpty()) {
+                recyclerShimmer.hideShimmerAdapter()
+                recyclerShimmer.visibility = View.GONE
+                moviePageListAdapter.setNetworkState(it)
+            }
         })
     }
 
@@ -42,15 +51,15 @@ class MovieActivity : AppCompatActivity(), MovieAdapter.OnItemClickListener {
         super.onStop()
     }
 
-    override fun onItemClicked(movieId: Int) {
-        //TODO - FIX MULTIPLE CLICK
-        MovieDetailsFragment.newInstance(movieId).show(supportFragmentManager, MovieDetailsFragment::class.java.name)
+    override fun onItemClicked(movieId: Int?) {
+        movieId?.let {
+            MovieDetailsFragment.newInstance(movieId).show(supportFragmentManager, MovieDetailsFragment::class.java.name)
+        }
     }
 
     private fun getMovieViewModel(movieRepository: MovieRepository): MovieViewModel {
         return ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
                 return MovieViewModel(movieRepository) as T
             }
         })[MovieViewModel::class.java]
