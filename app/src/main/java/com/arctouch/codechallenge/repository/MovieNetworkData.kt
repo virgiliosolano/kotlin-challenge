@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.arctouch.codechallenge.api.TmdbApi
-import com.arctouch.codechallenge.data.Cache
 import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.util.MovieImageUrlBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,43 +26,13 @@ class MovieNetworkData(private val tmdbApi: TmdbApi, private val compositeDispos
     val movieResponse: LiveData<Movie>
         get() = _movieResponse
 
-    private fun initializeMovieData(page: Long, region: String) {
-        try {
-
-            compositeDisposable.add(
-                    tmdbApi.genres()
-                            .subscribeOn(Schedulers.io())
-                            .subscribe({
-                                if (it != null) {
-                                    Cache.cacheGenres(it.genres)
-                                    fetchMovies(page, region)
-                                }
-                            }, {
-                                Log.e("MovieNetworkDataError", it.message)
-                            })
-            )
-
-        } catch (e: java.lang.Exception) {
-            Log.e("MovieNetworkDataError", e.message)
-        }
-    }
-
     fun fetchMovies(page: Long, region: String) {
         try {
-
-            if (Cache.genres.isEmpty()) {
-                initializeMovieData(page, region)
-                return
-            }
-
             compositeDisposable.add(
                     tmdbApi.upcomingMovies(page, region)
                             .subscribeOn(Schedulers.io())
                             .subscribe({
-                                val moviesWithGenres = it.results.map { movie ->
-                                    movie.copy(genres = Cache.genres.filter { movie.genreIds?.contains(it.id) == true })
-                                }
-                                _moviesResponse.postValue(moviesWithGenres)
+                                _moviesResponse.postValue(it.results)
                             }, {
                                 Log.e("MovieNetworkDataError", it.message)
                             })
@@ -71,20 +40,6 @@ class MovieNetworkData(private val tmdbApi: TmdbApi, private val compositeDispos
         } catch (e: java.lang.Exception) {
             Log.e("MovieNetworkDataError", e.message)
         }
-    }
-
-    fun fetchGenders() {
-        compositeDisposable.add(
-                tmdbApi.genres()
-                        .subscribeOn(Schedulers.io())
-                        .subscribe({
-                            if (it != null) {
-                                Cache.cacheGenres(it.genres)
-                            }
-                        }, {
-                            Log.e("MovieNetworkDataError", it.message)
-                        })
-        )
     }
 
     @SuppressLint("CheckResult")
